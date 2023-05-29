@@ -4,3 +4,6 @@
 [submodule "thirdparty/websocketpp"]
 	path = thirdparty/websocketpp
 	url = https://github.com/zaphoyd/websocketpp.git
+[submodule "thirdparty/openssl"]
+	path = thirdparty/openssl
+	url = https://github.com/openssl/openssl.git
