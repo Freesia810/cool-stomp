@@ -8,7 +8,10 @@ namespace coolstomp{
 
         class StompBinaryBuffer: public StompBuffer{
         public:
-            StompBinaryBuffer()
+            StompBinaryBuffer(const Byte*);
+            StompBinaryBuffer(const char*);
+            StompBinaryBuffer(std::vector<Byte>&&);
+            StompBinaryBuffer(std::vector<char>&&);
         };
     };
 };
