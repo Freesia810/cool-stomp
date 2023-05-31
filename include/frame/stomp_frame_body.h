@@ -1,3 +1,4 @@
+#include "buffer/stomp_buffer.h"
 
 namespace coolstomp{
     namespace frame{
