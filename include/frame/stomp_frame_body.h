@@ -1,3 +1,6 @@
+#ifndef __STOMP_FRAME_BODY__
+#define __STOMP_FRAME_BODY__
+
 #include "buffer/stomp_buffer.h"
 
 namespace coolstomp{
@@ -10,3 +13,5 @@ namespace coolstomp{
         };
     };
 };
+
+#endif

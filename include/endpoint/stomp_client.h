@@ -23,8 +23,8 @@ namespace coolstomp{
         class COOL_STOMP_PUBLIC StompClient{
         private:
             union {
-                no_tls_client no_tls_client_;
-                tls_client tls_client_;
+                no_tls_client* no_tls_client_;
+                tls_client* tls_client_;
             };
 
             union {

@@ -1,3 +1,6 @@
+#ifndef __STOMP_BUFFER__
+#define __STOMP_BUFFER__
+
 #include <memory>
 #include <vector>
 
@@ -14,3 +17,5 @@ namespace coolstomp{
         };
     };
 };
+
+#endif
