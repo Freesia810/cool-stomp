@@ -1,9 +1,12 @@
 #include "buffer/stomp_buffer.h"
+#include <string_view>
+
 namespace coolstomp{
     namespace buffer{
         class StompTextBuffer: public StompBuffer{
         public:
-        
+        private:
+            std::string_view text_;
         };
 
         class StompBinaryBuffer: public StompBuffer{
