@@ -2,15 +2,17 @@
 #define __STOMP_FRAME_HEADER__
 
 #include <vector>
+#include <string>
 #include "buffer/stomp_buffer.h"
 
 namespace coolstomp{
     namespace frame{
         class StompFrameHeaders{
         public:
-
+            friend class StompFrame;
         private:
-            std::vector<std::pair<buffer::StompBuffer, buffer::StompBuffer>> header_kvs_;
+            StompFrameHeaders() = default;
+            std::vector<std::pair<std::string, std::string>> header_kvs_;
         };
     };
 };

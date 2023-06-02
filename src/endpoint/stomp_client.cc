@@ -12,7 +12,7 @@ void coolstomp::endpoint::StompClient::Connect(const char* uri, bool sync, bool 
 		tls_client_->init_asio();
 		tls_client_->set_tls_init_handler(websocketpp::lib::bind(&StompClient::on_tls_init, this));
 
-		//connect
+		// connect
         websocketpp::lib::error_code ec{};
         tls_con_ = tls_client_->get_connection(uri, ec);
 		if (ec) {
@@ -150,4 +150,40 @@ void coolstomp::endpoint::StompClient::Disconnect(){
 			break;
 		}
 	}
+}
+
+void coolstomp::endpoint::StompClient::Subscribe(const char* destination, subscribe_callback callback){
+	auto it = this->topic_id_map_.find(destination);
+	if (it != this->topic_id_map_.end()) return;
+
+	// send subscribe frame
+	if(this->enable_tls_){
+		this->tls_con_->send(nullptr, 0, websocketpp::frame::opcode::TEXT);
+	}
+	else{
+		this->no_tls_con_->send(nullptr, 0, websocketpp::frame::opcode::TEXT);
+	}
+
+	this->topic_id_map_.insert(std::make_pair(destination, subscribe_id_gen_++));
+	this->topic_callback_map_.insert(std::make_pair(destination, callback));
+}
+
+void coolstomp::endpoint::StompClient::Unsubscribe(const char* destination){
+	auto it = this->topic_id_map_.find(destination);
+	if (it == this->topic_id_map_.end()) return;
+
+	// send unsubscribe
+	if(this->enable_tls_){
+		this->tls_con_->send(nullptr, 0, websocketpp::frame::opcode::TEXT);
+	}
+	else{
+		this->no_tls_con_->send(nullptr, 0, websocketpp::frame::opcode::TEXT);
+	}
+
+	this->topic_id_map_.erase(destination);
+	this->topic_callback_map_.erase(destination);
+}
+
+void coolstomp::endpoint::StompClient::message_dispatcher_no_tls(websocketpp::connection_hdl hdl, no_tls_client::message_ptr msg){
+
 }

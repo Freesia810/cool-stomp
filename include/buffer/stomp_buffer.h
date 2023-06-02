@@ -12,8 +12,7 @@ namespace coolstomp{
 
         protected:
             StompBuffer() = default;
-            StompBuffer(std::vector<Byte>&& vec): raw_buffer_(vec) {};
-            std::vector<Byte> raw_buffer_;
+            Byte* raw_buffer_;
         };
     };
 };
