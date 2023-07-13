@@ -9,16 +9,13 @@
 #include <thread>
 
 #include "macros.h"
-
-#ifndef __WINDOWS__
-#include "frame/stomp_send_frame.h"
-#endif
+#include "type.h"
 
 namespace coolstomp{
     namespace endpoint{
         using no_tls_client = websocketpp::client<websocketpp::config::asio_client>;
         using tls_client = websocketpp::client<websocketpp::config::asio_tls_client>;
-        using subscribe_callback = std::function<void(std::shared_ptr<frame::StompFrame>)>;
+        using subscribe_callback = std::function<void(coolstomp::Message)>;
 
         class COOL_STOMP_PUBLIC StompClient{
         private:
@@ -62,11 +59,11 @@ namespace coolstomp{
             void Subscribe(const char* destination, subscribe_callback callback);
             void Unsubscribe(const char* destination);
 
-
-            void SendSimpleMessage(const char* destination, const char* msg);
-            void SendJsonMessage(const char* destination, const char* msg);
-            void SendByteMessage(const char* destination, const char* buffer, uint64_t sz);
-            void SendMessage(const char* destination, ...);
+            void SendEmptyFrame(const char* destination);
+            void SendSimpleFrame(const char* destination, const char* msg);
+            void SendJsonFrame(const char* destination, const char* msg);
+            void SendByteFrame(const char* destination, const char* buffer, uint64_t sz);
+            void SendFrame(const char* destination, const char* msg, std::initializer_list<const char*> headers);
 
 
             virtual void onWebsocketConnected() {};

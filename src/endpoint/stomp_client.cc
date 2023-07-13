@@ -1,4 +1,5 @@
 #include "endpoint/stomp_client.h"
+#include <cstring>
 
 void coolstomp::endpoint::StompClient::Connect(const char* uri, bool sync, bool enable_tls){
 	this->enable_tls_ = enable_tls;
@@ -190,4 +191,25 @@ void coolstomp::endpoint::StompClient::Unsubscribe(const char* destination){
 
 void coolstomp::endpoint::StompClient::message_dispatcher_no_tls(websocketpp::connection_hdl hdl, no_tls_client::message_ptr msg){
 
+}
+
+void coolstomp::endpoint::StompClient::SendEmptyFrame(const char* destination){
+	SendFrame(destination, nullptr, {});
+}
+
+void coolstomp::endpoint::StompClient::SendSimpleFrame(const char* destination, const char* msg){
+	std::string tmp = "content-length:";
+	tmp = tmp + std::to_string(strlen(msg));
+	SendFrame(destination, msg, {"content-type:text/plain", tmp.c_str()});
+}
+void coolstomp::endpoint::StompClient::SendJsonFrame(const char* destination, const char* msg){
+	std::string tmp = "content-length:";
+	tmp = tmp + std::to_string(strlen(msg));
+	SendFrame(destination, msg, {"content-type:application/json", tmp.c_str()});
+}
+void coolstomp::endpoint::StompClient::SendByteFrame(const char* destination, const char* buffer, uint64_t sz){
+	SendFrame(destination, buffer, {"content-type:application/octet-stream", std::to_string(sz).c_str()});
+}
+void coolstomp::endpoint::StompClient::SendFrame(const char* destination, const char* msg, std::initializer_list<const char*> headers){
+	
 }

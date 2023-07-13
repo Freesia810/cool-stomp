@@ -16,7 +16,10 @@ std::unordered_map<std::string, coolstomp::frame::StompFrameCommand> coolstomp::
     { "SUBSCRIBE", StompFrameCommand::SUBSCRIBE },
     { "UNSUBSCRIBE", StompFrameCommand::UNSUBSCRIBE },
     { "ACK", StompFrameCommand::ACK },
-    { "NACK", StompFrameCommand::NACK }
+    { "NACK", StompFrameCommand::NACK },
+    { "BEGIN", StompFrameCommand::BEGIN },
+    { "COMMIT", StompFrameCommand::COMMIT },
+    { "ABORT", StompFrameCommand::ABORT }
 };
 
 coolstomp::frame::StompFrame::StompFrame(const char* raw){
