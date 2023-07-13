@@ -3,6 +3,10 @@
 void coolstomp::endpoint::StompClient::Connect(const char* uri, bool sync, bool enable_tls){
 	this->enable_tls_ = enable_tls;
     this->uri_ = uri;
+
+	// check uri matching enable_tls config?
+
+
     if(this->enable_tls_){
         // tls init
 		tls_client_ = new tls_client();
@@ -111,7 +115,7 @@ void coolstomp::endpoint::StompClient::on_open_no_tls(no_tls_client* c, websocke
     //websocket connected
     this->onWebsocketConnected();
 
-    auto tmp = uri_.substr(5);
+    auto tmp = uri_.substr(5); //ws://
 	auto host = tmp.substr(0, tmp.find_first_of('/'));
 
 	// send connect frame
@@ -122,7 +126,7 @@ void coolstomp::endpoint::StompClient::on_open_tls(tls_client* c, websocketpp::c
     //websocket connected
     this->onWebsocketConnected();
 
-    auto tmp = uri_.substr(5);
+    auto tmp = uri_.substr(6); //wss://
 	auto host = tmp.substr(0, tmp.find_first_of('/'));
 
 	// send connect frame

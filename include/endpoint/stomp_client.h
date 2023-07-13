@@ -62,11 +62,13 @@ namespace coolstomp{
             void Subscribe(const char* destination, subscribe_callback callback);
             void Unsubscribe(const char* destination);
 
-#ifdef __WINDOWS__
-            void Send(const char* destination, const char* raw_buffer);
-#else
-            void Send(const char* destination, frame::StompSendFrame& frame);
-#endif
+
+            void SendSimpleMessage(const char* destination, const char* msg);
+            void SendJsonMessage(const char* destination, const char* msg);
+            void SendByteMessage(const char* destination, const char* buffer, uint64_t sz);
+            void SendMessage(const char* destination, ...);
+
+
             virtual void onWebsocketConnected() {};
             virtual void onStompConnected() {};
             virtual void onStompDisconnected() {};
