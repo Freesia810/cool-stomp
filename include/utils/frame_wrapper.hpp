@@ -6,23 +6,13 @@
 #include <unordered_map>
 #include <string>
 
+#include "endpoint/stomp_client.h"
+
 namespace coolstomp{
     namespace utils{
-
-        class Singleton {
-        private:
-            Singleton() { };
-            ~Singleton() { };
-            Singleton(const Singleton&);
-            Singleton& operator=(const Singleton&);
-        public:
-            static Singleton& getInstance() {
-                static Singleton instance;
-                return instance;
-            }
-        };
-
         class FrameWrapper{
+        public:
+            friend class coolstomp::endpoint::StompClient;
         private:
             inline static std::unordered_map<std::string, StompFrameCommand> cmd_map_ = {
                 { "MESSAGE", StompFrameCommand::MESSAGE },
@@ -46,7 +36,22 @@ namespace coolstomp{
                 "COMMIT", "ABORT", "ACK", "NACK", "DISCONNECT", "CONNECT",
                 "STOMP", "CONNECTED", "MESSAGE", "RECEIPT","ERROR"
             };
+
+            FrameWrapper() { };
+            ~FrameWrapper() { };
+            FrameWrapper(const FrameWrapper&) = delete;
+            FrameWrapper& operator=(const FrameWrapper&) = delete;
+
+            static FrameWrapper& getInstance() {
+                static FrameWrapper instance;
+                return instance;
+            }
+
             static void WrapFrame(StompFrameCommand type, const char* headers, const char* body, char*& buf, size_t& len){
+
+            };
+
+            static void UnwrapFrame(){
 
             };
         };

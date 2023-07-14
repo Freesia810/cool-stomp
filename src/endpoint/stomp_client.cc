@@ -1,4 +1,6 @@
 #include "endpoint/stomp_client.h"
+#include "utils/frame_wrapper.hpp"
+#include "type.h"
 #include <cstring>
 
 void coolstomp::endpoint::StompClient::Connect(const char* uri, bool sync, bool enable_tls){
@@ -136,6 +138,10 @@ void coolstomp::endpoint::StompClient::on_open_tls(tls_client* c, websocketpp::c
 
 void coolstomp::endpoint::StompClient::Disconnect(){
     // send disconnect frame
+	char* buf = nullptr;
+	size_t len = 0;
+
+	coolstomp::utils::FrameWrapper::getInstance().WrapFrame(StompFrameCommand::DISCONNECT, "receipt:disconnect", nullptr, buf, len);
 	if(this->enable_tls_){
 		tls_con_->send(nullptr, 0, websocketpp::frame::opcode::TEXT);
 	}
@@ -178,12 +184,20 @@ void coolstomp::endpoint::StompClient::Unsubscribe(const char* destination){
 	if (it == this->topic_id_map_.end()) return;
 
 	// send unsubscribe
+	char* buf = nullptr;
+	size_t len = 0;
+
+	std::string header = "id:";
+	header = header + std::to_string(it->second);
+
+	coolstomp::utils::FrameWrapper::getInstance().WrapFrame(StompFrameCommand::UNSUBSCRIBE, header.c_str(), nullptr, buf, len);
 	if(this->enable_tls_){
-		this->tls_con_->send(nullptr, 0, websocketpp::frame::opcode::TEXT);
+		this->tls_con_->send(buf, len, websocketpp::frame::opcode::TEXT);
 	}
 	else{
-		this->no_tls_con_->send(nullptr, 0, websocketpp::frame::opcode::TEXT);
+		this->no_tls_con_->send(buf, len, websocketpp::frame::opcode::TEXT);
 	}
+	delete buf;
 
 	this->topic_id_map_.erase(destination);
 	this->topic_callback_map_.erase(destination);
@@ -202,14 +216,34 @@ void coolstomp::endpoint::StompClient::SendSimpleFrame(const char* destination, 
 	tmp = tmp + std::to_string(strlen(msg));
 	SendFrame(destination, msg, {"content-type:text/plain", tmp.c_str()});
 }
+
 void coolstomp::endpoint::StompClient::SendJsonFrame(const char* destination, const char* msg){
 	std::string tmp = "content-length:";
 	tmp = tmp + std::to_string(strlen(msg));
 	SendFrame(destination, msg, {"content-type:application/json", tmp.c_str()});
 }
+
 void coolstomp::endpoint::StompClient::SendByteFrame(const char* destination, const char* buffer, uint64_t sz){
 	SendFrame(destination, buffer, {"content-type:application/octet-stream", std::to_string(sz).c_str()});
 }
+
 void coolstomp::endpoint::StompClient::SendFrame(const char* destination, const char* msg, std::initializer_list<const char*> headers){
-	
+	char* buf = nullptr;
+	size_t len = 0;
+
+	std::string header = "destination:";
+	header += destination;
+	for(auto str: headers){
+		header += str;
+	}
+
+	coolstomp::utils::FrameWrapper::getInstance().WrapFrame(StompFrameCommand::SEND, header.c_str(), msg, buf, len);
+	if(enable_ssl){
+		tls_con_->send(buf, len, websocketpp::frame::opcode::TEXT);
+	}
+	else{
+		no_tls_con_->send(buf, len, websocketpp::frame::opcode::TEXT);
+	}
+
+	delete buf;
 }
